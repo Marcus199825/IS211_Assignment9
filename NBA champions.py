@@ -1,22 +1,24 @@
 # Script for scraping NBA Finals information: https://en.wikipedia.org/wiki/NBA_Finals #
 
-python
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
 
-def scrape_nba_finals_info():
-    url = "https://en.wikipedia.org/wiki/NBA_Finals"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, "html.parser")
-    
-    info_paragraph = soup.find("div", class_="mw-parser-output").find_all("p")[0].text.strip()
-    return info_paragraph
+# Wikipedia page URL
+url = "https://en.wikipedia.org/wiki/List_of_NBA_champions"
 
-if __name__ == "__main__":
-    nba_info = scrape_nba_finals_info()
-    print(nba_info)
+# Send a GET request to the URL
+response = requests.get(url)
 
+# Parse the HTML content
+soup = BeautifulSoup(response.content, "html.parser")
 
+# Find the table containing the NBA champions
+table = soup.find("table", {"class": "wikitable"})
 
-if __name__ == "__main__":
-    pass
+# Extract table data into a DataFrame
+df = pd.read_html(str(table))[0]
+
+# Display the DataFrame
+print(df)
+

@@ -1,31 +1,24 @@
 # Script for scraping Nobel Memorial Prize laureates: https://en.wikipedia.org/wiki/List_of_Nobel_Memorial_Prize_laureates_in_Economic_Sciences" #
 
-python
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
 
-def scrape_nobel_laureates():
-    url = "https://en.wikipedia.org/wiki/List_of_Nobel_Memorial_Prize_laureates_in_Economic_Sciences"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.content, "html.parser")
-    
-    laureates_list = []
-    table = soup.find("table", class_="wikitable")
-    rows = table.find_all("tr")[1:]
-    
-    for row in rows:
-        columns = row.find_all("td")
-        year = columns[0].text.strip()
-        laureates = columns[1].text.strip()
-        laureates_list.append(f"{year}. {laureates}")
-    
-    return laureates_list
+# Wikipedia page URL
+url = "https://en.wikipedia.org/wiki/List_of_Nobel_Memorial_Prize_laureates_in_Economics"
 
-if __name__ == "__main__":
-    laureates = scrape_nobel_laureates()
-    for laureate in laureates:
-        print(laureate)
+# Send a GET request to the URL
+response = requests.get(url)
 
+# Parse the HTML content
+soup = BeautifulSoup(response.content, "html.parser")
 
-if __name__ == "__main__":
-    pass
+# Find the table containing the laureates
+table = soup.find("table", {"class": "wikitable"})
+
+# Extract table data into a DataFrame
+df = pd.read_html(str(table))[0]
+
+# Display the DataFrame
+print(df)
+
